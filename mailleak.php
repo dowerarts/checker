@@ -1,5 +1,3 @@
-curl "https://digibody.avast.com/v1/web/leaks" -H "Connection: keep-alive" -H "Accept: application/json, text/plain, */*" -H "Sec-Fetch-Dest: empty" -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36" -H "Content-Type: application/json;charset=UTF-8" -H "Origin: https://www.avast.com" -H "Sec-Fetch-Site: same-site" -H "Sec-Fetch-Mode: cors" -H "Referer: https://www.avast.com/hackcheck" -H "Accept-Language: id,en;q=0.9" --data-binary "^{^\^"email^\^":^\^"dowerarts^@gmail.com^\^"^}" --compressed
-
 <?php
 
 function curl($url,$post,$headers)
