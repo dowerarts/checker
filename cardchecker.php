@@ -36,6 +36,7 @@ if (strpos($gas[1], 'approved')) {
 		echo "[Die] [$typeCC2 $type]  $card|$month|$year|$cvv BIN : $cate $country \n";		
 	} else {	
 		echo "[Unknown] [$typeCC2 $type] $card|$month|$year|$cvv BIN : $cate $country\n";
+		fwrite(fopen("card-unknown.txt", "a"), "$card|$month|$year|$cvv\n");
 		// print_r($gas[1]);
 	}
 }
