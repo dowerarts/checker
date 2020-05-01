@@ -1,8 +1,7 @@
  <?php
   echo "List Creditcard  : ";
 $xyz = trim(fgets(STDIN));
-$jml = count(explode("\n", str_replace("\r", "", file_get_contents($xyz))));
-echo "\n";
+$no = 1;
 $jml = count(explode("\n", str_replace("\r", "", file_get_contents($xyz))));
 console::log("Total Creditcard : $jml", 'white');
 echo "\n";
