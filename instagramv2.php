@@ -1,23 +1,15 @@
 <?php
-
+error_reporting(0);
+while(true){
 $nama = explode(" ", nama());
 $nama1 = $nama[0];
 $nama2 = $nama[1];
 $headers = array();
+$hasil_1= acak(2);
+$email = ''.$nama1.''.$hasil_1.'@getnada.com';
 
-$email = ''.$nama1.'@osyduck.co';
-
-$gas = curl('http://osyduck.co/mailbox/'.$nama1.'@osyduck.co', null, null);
-$xsrf = ($gas[2]['XSRF-TOKEN']);
-$session = ($gas[2]['osyduck_mail_session']);
-
-$headers2 = array();
-$headers2[] = 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0';
-$headers2[] = 'Referer: http://osyduck.co/mailbox/'.$nama1.'@osyduck.co';
-$headers2[] = 'Cookie: XSRF-TOKEN='.$xsrf.'; osyduck_mail_session='.$session.'; server_error=false';
-
-$gas2 = curl('http://osyduck.co/mail/fetch', null, $headers2);
-$code = get_between($gas2[1], '"subject":"', ' is your Instagram code');
+$verif = curl('https://getnada.com/api/v1/inboxes/'.$nama1.''.$hasil_1.'@getnada.com', null, null);
+$code = get_between($verif[1], '"Instagram","s":"', ' is your Instagram code');
 
 $headers = array();
 $headers[] = 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0';
@@ -33,6 +25,11 @@ $csrftoken = ($gas[2]['csrftoken']);
 $rur = ($gas[2]['rur']);
 $mid = ($gas[2]['mid']);
 
+echo "Created New Account";
+echo "\n";
+echo "\n";
+echo "\n";
+echo "\n";
 $headers2 = array();
 $headers2[] = 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/77.0';
 $headers2[] = 'Content-Type: application/x-www-form-urlencoded';
@@ -60,12 +57,8 @@ echo "[2] ++.Username Tersedia : $name.++\n";
 $username = get_between($gas3[1], '"username_suggestions": ["', '",');
 echo "[3] ++.Username Yang Diinginkan : $username\n";
 $gas4 = curl('https://www.instagram.com/accounts/web_create_ajax/attempt/', 'email='.$email.'&username='.$username.'&first_name='.$nama1.'+'.$nama2.'&opt_into_one_tap=false', $headers2);
-echo "[4] ++.Sedang Getting Code 120second.++\n";
-sleep(60);
-echo "++.Sedang Getting Code 60second.++\n";
-sleep(60);
 $gas5 = curl('https://i.instagram.com/api/v1/accounts/send_verify_email/', 'device_id=XttrrwALAAED7O2SezcNHEsrL616&email='.$email.'', $headers2);
-echo "[5] Sedang Verif\n";
+echo "[4] Sedang Verif\n";
 $gas6 = curl('https://i.instagram.com/api/v1/accounts/check_confirmation_code/', 'code='.$code.'&device_id=XttrrwALAAED7O2SezcNHEsrL616&email='.$email.'', $headers2);
 if (strpos($gas6[1], '"status": "ok"')) {
 	echo "[6] ++.Success Register.++\n";
@@ -74,9 +67,10 @@ if (strpos($gas6[1], '"status": "ok"')) {
 }
 $gas7 = curl('https://www.instagram.com/accounts/web_create_ajax/', 'email='.$email.'&enc_password=%23PWD_INSTAGRAM_BROWSER%3A10%3A1591441218%3AAcxQAAmmYC2tz4G%2FnrrY1gfQj1b1N5dmTKbVBnGndEjSC1wKHwFmp02A47HOOW9iWbuh5Gwmvj64Dkh6bNMk%2FTDVNtLzxnMhW7u%2FTaM8E9vtNboBwTlORQ8B703XeAxh0yzCm4JTyGxifXkNYw%3D%3D&username='.$username.'&first_name='.$nama1.'+'.$nama2.'&month=6&day=6&year=2000&client_id=XttrrwALAAED7O2SezcNHEsrL616&seamless_login_enabled=1&tos_version=row&force_sign_up_code=2vZGMwPW', $headers2);
 $link = $name = get_between($gas7[1], '"checkpoint_url": "', '",');
-echo "[7] Checkpoint Url = $link\n";
-echo "[8] Saved Files To -> instagram-live.txt";
+echo "[5] Checkpoint Url = $link\n";
+echo "[6] Saved Files To -> instagram-live.txt\n";
 		fwrite(fopen("instagram-live.txt", "a"), "$email | Alfarz123 \n");
+	}
 function curl($url,$post,$headers)
 {
 	$ch = curl_init();
@@ -124,3 +118,13 @@ function nama()
 	preg_match_all('~(&bull; (.*?)<br/>&bull; )~', $ex, $name);
 	return $name[2][mt_rand(0, 14) ];
 	}
+function acak($panjang)
+{
+    $karakter= 'ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
+    $string = '';
+    for ($i = 0; $i < $panjang; $i++) {
+  $pos = rand(0, strlen($karakter)-1);
+  $string .= $karakter{$pos};
+    }
+    return $string;
+}
